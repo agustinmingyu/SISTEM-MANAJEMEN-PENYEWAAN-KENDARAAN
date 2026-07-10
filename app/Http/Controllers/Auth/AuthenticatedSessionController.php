@@ -17,6 +17,7 @@ class AuthenticatedSessionController extends Controller
      */
     public function create(): View
     {
+        
         return view('auth.login');
     }
 
@@ -25,12 +26,21 @@ class AuthenticatedSessionController extends Controller
      */
     public function store(LoginRequest $request): RedirectResponse
     {
+        
+        // Autentikasi email & password
         $request->authenticate();
 
+        // Regenerasi session
         $request->session()->regenerate();
 
+        // Ambil user yang sedang login
         $user = Auth::user();
 
+        // dd($user->role);
+
+        // ==============================
+        // Two Factor Authentication
+        // ==============================
         if (
             Features::enabled(Features::twoFactorAuthentication()) &&
             ! is_null($user->two_factor_secret) &&
@@ -47,7 +57,15 @@ class AuthenticatedSessionController extends Controller
             return redirect()->route('two-factor.login');
         }
 
-        return redirect()->intended(route('dashboard', absolute: false));
+        // ==============================
+        // Redirect berdasarkan Role
+        // ==============================
+
+        if ($user->isAdmin()) {
+            return redirect()->intended(route('admin.dashboard'));
+        }
+
+        return redirect()->intended(route('dashboard'));
     }
 
     /**
