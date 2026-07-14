@@ -1,30 +1,25 @@
 <?php
 
-namespace App\Http\Responses;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
-use Illuminate\Http\JsonResponse;
-use Laravel\Fortify\Contracts\TwoFactorLoginResponse as TwoFactorLoginResponseContract;
-use Illuminate\Support\Facades\Auth;
-
-class TwoFactorLoginResponse implements TwoFactorLoginResponseContract
+return new class extends Migration
 {
     /**
-     * Create an HTTP response that represents the object.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Symfony\Component\HttpFoundation\Response
+     * Run the migrations.
      */
-    public function toResponse($request)
-    {
-        if ($request->wantsJson()) {
-            return new JsonResponse('', 204);
-        }
-
-        $user = Auth::user();
-        $redirectUrl = $user && $user->isAdmin() 
-            ? route('admin.dashboard') 
-            : route('dashboard');
-
-        return redirect()->intended($redirectUrl);
-    }
+    public function up(): void
+{
+    Schema::table('users', function (Blueprint $table) {
+        $table->string('role')->default('user');
+    });
 }
+
+public function down(): void
+{
+    Schema::table('users', function (Blueprint $table) {
+        $table->dropColumn('role');
+    });
+}
+};
