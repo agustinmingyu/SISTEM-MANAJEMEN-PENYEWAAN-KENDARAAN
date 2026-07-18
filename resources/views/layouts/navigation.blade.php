@@ -18,19 +18,19 @@
                         <x-nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.dashboard')">
                             {{ __('Dashboard') }}
                         </x-nav-link>
-                        <x-nav-link :href="route('kendaraan.index')" :active="request()->routeIs('kendaraan.*')">
+                        <x-nav-link :href="route('admin.kendaraan.index')" :active="request()->routeIs('admin.kendaraan.*')">
                             {{ __('Kendaraan') }}
                         </x-nav-link>
-                        <x-nav-link :href="route('penyewaan.index')" :active="request()->routeIs('penyewaan.*')">
+                        <x-nav-link :href="route('admin.penyewaan.index')" :active="request()->routeIs('admin.penyewaan.*')">
                             {{ __('Penyewaan') }}
                         </x-nav-link>
-                        <x-nav-link :href="route('pembayaran.index')" :active="request()->routeIs('pembayaran.*')">
+                        <x-nav-link :href="route('admin.pembayaran.index')" :active="request()->routeIs('admin.pembayaran.*')">
                             {{ __('Pembayaran') }}
                         </x-nav-link>
-                        <x-nav-link :href="route('riwayat-pembayaran.index')" :active="request()->routeIs('riwayat-pembayaran.*')">
+                        <x-nav-link :href="route('admin.riwayat-pembayaran.index')" :active="request()->routeIs('admin.riwayat-pembayaran.*')">
                             {{ __('Riwayat Pembayaran') }}
                         </x-nav-link>
-                        <x-nav-link :href="route('laporan.index')" :active="request()->routeIs('laporan.*')">
+                        <x-nav-link :href="route('admin.laporan.index')" :active="request()->routeIs('admin.laporan.*')">
                             {{ __('Laporan') }}
                         </x-nav-link>
 
@@ -105,19 +105,19 @@
                 <x-responsive-nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.dashboard')">
                     {{ __('Dashboard') }}
                 </x-responsive-nav-link>
-                <x-responsive-nav-link :href="route('kendaraan.index')" :active="request()->routeIs('kendaraan.*')">
+                <x-responsive-nav-link :href="route('admin.kendaraan.index')" :active="request()->routeIs('admin.kendaraan.*')">
                     {{ __('Kendaraan') }}
                 </x-responsive-nav-link>
-                <x-responsive-nav-link :href="route('penyewaan.index')" :active="request()->routeIs('penyewaan.*')">
+                <x-responsive-nav-link :href="route('admin.penyewaan.index')" :active="request()->routeIs('admin.penyewaan.*')">
                     {{ __('Penyewaan') }}
                 </x-responsive-nav-link>
-                <x-responsive-nav-link :href="route('pembayaran.index')" :active="request()->routeIs('pembayaran.*')">
+                <x-responsive-nav-link :href="route('admin.pembayaran.index')" :active="request()->routeIs('admin.pembayaran.*')">
                     {{ __('Pembayaran') }}
                 </x-responsive-nav-link>
-                <x-responsive-nav-link :href="route('riwayat-pembayaran.index')" :active="request()->routeIs('riwayat-pembayaran.*')">
+                <x-responsive-nav-link :href="route('admin.riwayat-pembayaran.index')" :active="request()->routeIs('admin.riwayat-pembayaran.*')">
                     {{ __('Riwayat Pembayaran') }}
                 </x-responsive-nav-link>
-                <x-responsive-nav-link :href="route('laporan.index')" :active="request()->routeIs('laporan.*')">
+                <x-responsive-nav-link :href="route('admin.laporan.index')" :active="request()->routeIs('admin.laporan.*')">
                     {{ __('Laporan') }}
                 </x-responsive-nav-link>
             

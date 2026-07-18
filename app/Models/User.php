@@ -11,6 +11,7 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
+use App\Models\Penyewaan;
 
 #[Fillable(['name', 'email', 'password', 'role'])]
 #[Hidden(['password', 'remember_token'])]
@@ -40,11 +41,19 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->role === 'admin';
     }
 
-    /**
+        /**
      * Cek apakah user memiliki role user.
      */
     public function isUser(): bool
     {
         return $this->role === 'user';
+    }
+
+    /**
+     * Relasi ke tabel penyewaans.
+     */
+    public function penyewaans()
+    {
+        return $this->hasMany(Penyewaan::class);
     }
 }

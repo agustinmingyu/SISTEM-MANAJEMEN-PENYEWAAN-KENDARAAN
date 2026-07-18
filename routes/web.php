@@ -1,23 +1,17 @@
 <?php
 
-use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\Admin\KendaraanController;
+use App\Http\Controllers\User\PenyewaanController;
+
 
 /*
 |--------------------------------------------------------------------------
 | Home
 |--------------------------------------------------------------------------
 */
-// Route::get('/', function () {
-//     dd([
-//         'check' => auth()->check(),
-//         'id' => auth()->id(),
-//         'email' => auth()->user()?->email,
-//         'role' => auth()->user()?->role,
-//     ]);
 
-//     return view('home');
-// });
 Route::get('/', function () {
     return view('welcome');
 });
@@ -38,23 +32,14 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/dashboard', function () {
         return view('dashboard');
-    })->middleware([
+    })
+    ->middleware([
         'verified',
         'role:user',
-    ])->name('dashboard');
+    ])
+    ->name('dashboard');
 
-    /*
-    |--------------------------------------------------------------------------
-    | Dashboard Admin
-    |--------------------------------------------------------------------------
-    */
-
-    Route::get('/admin', function () {
-        return view('admin.dashboard');
-    })->middleware([
-        'role:admin',
-    ])->name('admin.dashboard');
-
+    
     /*
     |--------------------------------------------------------------------------
     | Profile
@@ -65,23 +50,74 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
+  /*
+|--------------------------------------------------------------------------
+| Admin Routes
+|--------------------------------------------------------------------------
+*/
+
+Route::middleware('role:admin')
+    ->prefix('admin')
+    ->name('admin.')
+    ->group(function () {
+
+        // Dashboard Admin
+        Route::get('/', function () {
+            return view('admin.dashboard');
+        })->name('dashboard');
+
+        // CRUD Kendaraan
+        Route::resource('kendaraan', KendaraanController::class);
+
+        // Menu lainnya
+        Route::get('/penyewaan', fn() => redirect()->route('admin.dashboard'))->name('penyewaan.index');
+        Route::get('/pembayaran', fn() => redirect()->route('admin.dashboard'))->name('pembayaran.index');
+        Route::get('/riwayat-pembayaran', fn() => redirect()->route('admin.dashboard'))->name('riwayat-pembayaran.index');
+        Route::get('/laporan', fn() => redirect()->route('admin.dashboard'))->name('laporan.index');
+
+    });
+
     /*
     |--------------------------------------------------------------------------
-    | Dummy Routes for Navigation
+    | User Routes
     |--------------------------------------------------------------------------
     */
-    // Admin dummy routes
-    Route::get('/admin/kendaraan', fn() => redirect()->route('admin.dashboard'))->name('kendaraan.index');
-    Route::get('/admin/penyewaan', fn() => redirect()->route('admin.dashboard'))->name('penyewaan.index');
-    Route::get('/admin/pembayaran', fn() => redirect()->route('admin.dashboard'))->name('pembayaran.index');
-    Route::get('/admin/riwayat-pembayaran', fn() => redirect()->route('admin.dashboard'))->name('riwayat-pembayaran.index');
-    Route::get('/admin/laporan', fn() => redirect()->route('admin.dashboard'))->name('laporan.index');
 
-    // User dummy routes
-    Route::get('/user/daftar-kendaraan', fn() => redirect()->route('dashboard'))->name('daftar-kendaraan.index');
-    Route::get('/user/penyewaan-kendaraan', fn() => redirect()->route('dashboard'))->name('penyewaan-kendaraan.index');
-    Route::get('/user/pembayaran', fn() => redirect()->route('dashboard'))->name('pembayaran.user');
-    Route::get('/user/riwayat-penyewaan', fn() => redirect()->route('dashboard'))->name('riwayat-penyewaan.index');
+    Route::middleware('role:user')
+    ->prefix('user')
+    ->name('user.')
+    ->group(function () {
+
+        // Daftar penyewaan user
+        Route::get('/penyewaan', [PenyewaanController::class, 'index'])
+            ->name('penyewaan.index');
+
+        // Form tambah penyewaan
+        Route::get('/penyewaan/create', [PenyewaanController::class, 'create'])
+            ->name('penyewaan.create');
+
+        // Simpan penyewaan
+        Route::post('/penyewaan', [PenyewaanController::class, 'store'])
+            ->name('penyewaan.store');
+
+        // Detail penyewaan
+        Route::get('/penyewaan/{penyewaan}', [PenyewaanController::class, 'show'])
+            ->name('penyewaan.show');
+
+        // Form edit penyewaan
+        Route::get('/penyewaan/{penyewaan}/edit', [PenyewaanController::class, 'edit'])
+            ->name('penyewaan.edit');
+
+        // Update penyewaan
+        Route::put('/penyewaan/{penyewaan}', [PenyewaanController::class, 'update'])
+            ->name('penyewaan.update');
+
+        // Hapus penyewaan
+        Route::delete('/penyewaan/{penyewaan}', [PenyewaanController::class, 'destroy'])
+            ->name('penyewaan.destroy');
+
+    });
+
 });
 
 require __DIR__.'/auth.php';

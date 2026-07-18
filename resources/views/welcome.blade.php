@@ -10,7 +10,8 @@
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=figtree:300,400,500,600,700,800&display=swap" rel="stylesheet" />
 
-        <!-- Scripts & Styles -->
+        <!-- Scripts
+          & Styles -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
     <body class="font-sans antialiased bg-zinc-950 text-zinc-100 min-h-screen relative overflow-x-hidden selection:bg-amber-500 selection:text-black">
