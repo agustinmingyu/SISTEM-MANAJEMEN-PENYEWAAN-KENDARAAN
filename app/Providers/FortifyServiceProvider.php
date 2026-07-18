@@ -25,14 +25,17 @@ class FortifyServiceProvider extends ServiceProvider
             \Laravel\Fortify\Contracts\TwoFactorLoginResponse::class,
             \App\Http\Responses\TwoFactorLoginResponse::class
         );
+
+        Fortify::ignoreRoutes();
     }
 
     /**
      * Bootstrap any application services.
      */
     public function boot(): void
-{
-    // Register Views
+    {
+        // Register Views
+
     Fortify::loginView(function () {
         return view('auth.login');
     });

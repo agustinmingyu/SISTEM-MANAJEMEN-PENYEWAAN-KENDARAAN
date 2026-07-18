@@ -5,6 +5,9 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Kendaraan;
 use Illuminate\Http\Request;
+use App\Http\Requests\StoreKendaraanRequest;
+use App\Http\Requests\UpdateKendaraanRequest;
+use Illuminate\Support\Facades\Log;
 
 class KendaraanController extends Controller
 {
@@ -29,29 +32,18 @@ class KendaraanController extends Controller
     /**
      * Menyimpan data kendaraan ke database.
      */
-    public function store(Request $request)
+    public function store(StoreKendaraanRequest $request)
     {
-        $request->validate([
-            'nama'         => 'required|string|max:255',
-            'merk'         => 'required|string|max:255',
-            'plat_nomor'   => 'required|string|max:20|unique:kendaraans,plat_nomor',
-            'tahun'        => 'required|integer',
-            'harga_sewa'   => 'required|numeric',
-            'status'       => 'required|in:tersedia,disewa',
-        ]);
+        try {
+            Kendaraan::create($request->validated());
 
-        Kendaraan::create([
-            'nama'         => $request->nama,
-            'merk'         => $request->merk,
-            'plat_nomor'   => $request->plat_nomor,
-            'tahun'        => $request->tahun,
-            'harga_sewa'   => $request->harga_sewa,
-            'status'       => $request->status,
-        ]);
-
-        return redirect()
-            ->route('admin.kendaraan.index')
-            ->with('success', 'Data kendaraan berhasil ditambahkan.');
+            return redirect()
+                ->route('admin.kendaraan.index')
+                ->with('success', 'Data kendaraan berhasil ditambahkan.');
+        } catch (\Exception $e) {
+            Log::error('Error storing kendaraan: '.$e->getMessage());
+            return back()->withInput()->with('error', 'Terjadi kesalahan saat menyimpan data kendaraan.');
+        }
     }
 
     /**
@@ -73,29 +65,18 @@ class KendaraanController extends Controller
     /**
      * Mengupdate data kendaraan.
      */
-    public function update(Request $request, Kendaraan $kendaraan)
+    public function update(UpdateKendaraanRequest $request, Kendaraan $kendaraan)
     {
-        $request->validate([
-            'nama'         => 'required|string|max:255',
-            'merk'         => 'required|string|max:255',
-            'plat_nomor'   => 'required|string|max:20|unique:kendaraans,plat_nomor,' . $kendaraan->id,
-            'tahun'        => 'required|integer',
-            'harga_sewa'   => 'required|numeric',
-            'status'       => 'required|in:tersedia,disewa',
-        ]);
+        try {
+            $kendaraan->update($request->validated());
 
-        $kendaraan->update([
-            'nama'         => $request->nama,
-            'merk'         => $request->merk,
-            'plat_nomor'   => $request->plat_nomor,
-            'tahun'        => $request->tahun,
-            'harga_sewa'   => $request->harga_sewa,
-            'status'       => $request->status,
-        ]);
-
-        return redirect()
-            ->route('admin.kendaraan.index')
-            ->with('success', 'Data kendaraan berhasil diperbarui.');
+            return redirect()
+                ->route('admin.kendaraan.index')
+                ->with('success', 'Data kendaraan berhasil diperbarui.');
+        } catch (\Exception $e) {
+            Log::error('Error updating kendaraan: '.$e->getMessage());
+            return back()->withInput()->with('error', 'Terjadi kesalahan saat memperbarui data kendaraan.');
+        }
     }
 
     /**

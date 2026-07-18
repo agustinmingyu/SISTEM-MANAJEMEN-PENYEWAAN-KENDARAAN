@@ -33,7 +33,7 @@
                         Mau jalan-jalan tetapi tidak punya kendaraan? Temukan kendaraan terbaik mulai dari motor atau mobil terbaik buat kenyamanan keluarga anda. Dapatkan diskon 10% untuk sewa pertamamu!
                     </p>
                     <div class="mt-4 flex gap-3">
-                        <a href="{{ route('daftar-kendaraan.index') }}" class="px-4 py-2 bg-amber-500 text-black hover:bg-amber-400 text-xs font-bold rounded-xl transition-all shadow-[0_4px_15px_rgba(245,158,11,0.25)] active:scale-95">
+                        <a href="{{ route('user.penyewaan.index') }}" class="px-4 py-2 bg-amber-500 text-black hover:bg-amber-400 text-xs font-bold rounded-xl transition-all shadow-[0_4px_15px_rgba(245,158,11,0.25)] active:scale-95">
                             Cari Kendaraan Sekarang
                         </a>
                     </div>
@@ -112,7 +112,7 @@
         <div class="bg-zinc-900/40 border border-zinc-800 rounded-3xl p-6 shadow-2xl relative overflow-hidden backdrop-blur-md">
             <div class="flex items-center justify-between border-b border-zinc-800 pb-3 mb-5">
                 <h3 class="text-sm font-bold uppercase tracking-wider text-zinc-400">Rekomendasi Kendaraan</h3>
-                <a href="{{ route('daftar-kendaraan.index') }}" class="text-xs text-amber-500 hover:text-amber-400 font-semibold transition-colors">
+                <a href="{{ route('user.penyewaan.index') }}" class="text-xs text-amber-500 hover:text-amber-400 font-semibold transition-colors">
                     Lihat Semua
                 </a>
             </div>
@@ -130,7 +130,7 @@
                             <p class="text-[10px] text-zinc-500"></p>
                         </div>
                     </div>
-                    <a href="{{ route('penyewaan-kendaraan.index') }}" class="px-3 py-1.5 bg-amber-500/10 border border-amber-500/20 text-amber-500 hover:bg-amber-500 hover:text-black rounded-lg text-[10px] font-bold transition-all">
+                    <a href="{{ route('user.penyewaan.index') }}" class="px-3 py-1.5 bg-amber-500/10 border border-amber-500/20 text-amber-500 hover:bg-amber-500 hover:text-black rounded-lg text-[10px] font-bold transition-all">
                         Sewa
                     </a>
                 </div>
@@ -147,7 +147,7 @@
                             <p class="text-[10px] text-zinc-500"></p>
                         </div>
                     </div>
-                    <a href="{{ route('penyewaan-kendaraan.index') }}" class="px-3 py-1.5 bg-amber-500/10 border border-amber-500/20 text-amber-500 hover:bg-amber-500 hover:text-black rounded-lg text-[10px] font-bold transition-all">
+                    <a href="{{ route('user.penyewaan.index') }}" class="px-3 py-1.5 bg-amber-500/10 border border-amber-500/20 text-amber-500 hover:bg-amber-500 hover:text-black rounded-lg text-[10px] font-bold transition-all">
                         Sewa
                     </a>
                 </div>

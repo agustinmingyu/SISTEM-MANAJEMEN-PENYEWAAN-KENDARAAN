@@ -16,6 +16,7 @@ class Penyewaan extends Model
         'lama_sewa',
         'total_harga',
         'status',
+        'idempotency_key',
     ];
 
     public function user()
@@ -26,5 +27,10 @@ class Penyewaan extends Model
     public function kendaraan()
     {
         return $this->belongsTo(Kendaraan::class);
+    }
+
+    public function pembayaran()
+    {
+        return $this->hasOne(Pembayaran::class);
     }
 }

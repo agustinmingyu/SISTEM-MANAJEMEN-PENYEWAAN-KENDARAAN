@@ -22,27 +22,32 @@
         <nav class="flex-1 p-4 space-y-2">
 
     <a href="{{ route('admin.dashboard') }}"
-       class="flex items-center gap-3 px-4 py-3 rounded-xl bg-amber-500 text-black font-bold shadow hover:bg-amber-400 transition">
+       class="flex items-center gap-3 px-4 py-3 rounded-xl transition {{ request()->routeIs('admin.dashboard') ? 'bg-amber-500 text-black font-bold shadow' : 'text-zinc-300 hover:bg-zinc-800 hover:text-white' }}">
         🏠 Dashboard
     </a>
 
     <a href="{{ route('admin.kendaraan.index') }}"
-       class="flex items-center gap-3 px-4 py-3 rounded-xl text-zinc-300 hover:bg-zinc-800 hover:text-white transition">
+       class="flex items-center gap-3 px-4 py-3 rounded-xl transition {{ request()->routeIs('admin.kendaraan.*') ? 'bg-amber-500 text-black font-bold shadow' : 'text-zinc-300 hover:bg-zinc-800 hover:text-white' }}">
         🚗 Data Kendaraan
     </a>
 
+    <a href="{{ route('admin.users.index') }}"
+       class="flex items-center gap-3 px-4 py-3 rounded-xl transition {{ request()->routeIs('admin.users.*') ? 'bg-amber-500 text-black font-bold shadow' : 'text-zinc-300 hover:bg-zinc-800 hover:text-white' }}">
+        👥 Data Pengguna
+    </a>
+
     <a href="{{ route('admin.penyewaan.index') }}"
-       class="flex items-center gap-3 px-4 py-3 rounded-xl text-zinc-300 hover:bg-zinc-800 hover:text-white transition">
+       class="flex items-center gap-3 px-4 py-3 rounded-xl transition {{ request()->routeIs('admin.penyewaan.*') ? 'bg-amber-500 text-black font-bold shadow' : 'text-zinc-300 hover:bg-zinc-800 hover:text-white' }}">
         📄 Penyewaan
     </a>
 
     <a href="{{ route('admin.pembayaran.index') }}"
-       class="flex items-center gap-3 px-4 py-3 rounded-xl text-zinc-300 hover:bg-zinc-800 hover:text-white transition">
+       class="flex items-center gap-3 px-4 py-3 rounded-xl transition {{ request()->routeIs('admin.pembayaran.*') ? 'bg-amber-500 text-black font-bold shadow' : 'text-zinc-300 hover:bg-zinc-800 hover:text-white' }}">
         💳 Pembayaran
     </a>
 
     <a href="{{ route('admin.laporan.index') }}"
-       class="flex items-center gap-3 px-4 py-3 rounded-xl text-zinc-300 hover:bg-zinc-800 hover:text-white transition">
+       class="flex items-center gap-3 px-4 py-3 rounded-xl transition {{ request()->routeIs('admin.laporan.*') ? 'bg-amber-500 text-black font-bold shadow' : 'text-zinc-300 hover:bg-zinc-800 hover:text-white' }}">
         📊 Laporan
     </a>
 

@@ -18,6 +18,9 @@
                         <x-nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.dashboard')">
                             {{ __('Dashboard') }}
                         </x-nav-link>
+                        <x-nav-link :href="route('admin.users.index')" :active="request()->routeIs('admin.users.*')">
+                            {{ __('Data Pengguna') }}
+                        </x-nav-link>
                         <x-nav-link :href="route('admin.kendaraan.index')" :active="request()->routeIs('admin.kendaraan.*')">
                             {{ __('Kendaraan') }}
                         </x-nav-link>
@@ -35,22 +38,14 @@
                         </x-nav-link>
 
                     @else
-                        <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                            {{ __('Dashboard') }}
-                        </x-nav-link>
-                        <x-nav-link :href="route('daftar-kendaraan.index')" :active="request()->routeIs('daftar-kendaraan.*')">
-                            {{ __('Daftar Kendaraan') }}
-                        </x-nav-link>
-                        <x-nav-link :href="route('penyewaan-kendaraan.index')" :active="request()->routeIs('penyewaan-kendaraan.*')">
-                            {{ __('Penyewaan Kendaraan') }}
-                        </x-nav-link>
-                        <x-nav-link :href="route('pembayaran.user')" :active="request()->routeIs('pembayaran.user')">
-                            {{ __('Pembayaran') }}
-                        </x-nav-link>
-                        <x-nav-link :href="route('riwayat-penyewaan.index')" :active="request()->routeIs('riwayat-penyewaan.*')">
-                            {{ __('Riwayat Penyewaan') }}
-                        </x-nav-link>
-                    @endif
+    <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
+        {{ __('Dashboard') }}
+    </x-nav-link>
+
+    <x-nav-link :href="route('user.penyewaan.index')" :active="request()->routeIs('user.penyewaan.*')">
+        {{ __('Penyewaan Kendaraan') }}
+    </x-nav-link>
+@endif
                 </div>
             </div>
 
@@ -105,6 +100,9 @@
                 <x-responsive-nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.dashboard')">
                     {{ __('Dashboard') }}
                 </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('admin.users.index')" :active="request()->routeIs('admin.users.*')">
+                    {{ __('Data Pengguna') }}
+                </x-responsive-nav-link>
                 <x-responsive-nav-link :href="route('admin.kendaraan.index')" :active="request()->routeIs('admin.kendaraan.*')">
                     {{ __('Kendaraan') }}
                 </x-responsive-nav-link>
@@ -122,22 +120,14 @@
                 </x-responsive-nav-link>
             
             @else
-                <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                    {{ __('Dashboard') }}
-                </x-responsive-nav-link>
-                <x-responsive-nav-link :href="route('daftar-kendaraan.index')" :active="request()->routeIs('daftar-kendaraan.*')">
-                    {{ __('Daftar Kendaraan') }}
-                </x-responsive-nav-link>
-                <x-responsive-nav-link :href="route('penyewaan-kendaraan.index')" :active="request()->routeIs('penyewaan-kendaraan.*')">
-                    {{ __('Penyewaan Kendaraan') }}
-                </x-responsive-nav-link>
-                <x-responsive-nav-link :href="route('pembayaran.user')" :active="request()->routeIs('pembayaran.user')">
-                    {{ __('Pembayaran') }}
-                </x-responsive-nav-link>
-                <x-responsive-nav-link :href="route('riwayat-penyewaan.index')" :active="request()->routeIs('riwayat-penyewaan.*')">
-                    {{ __('Riwayat Penyewaan') }}
-                </x-responsive-nav-link>
-            @endif
+    <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
+        {{ __('Dashboard') }}
+    </x-nav-link>
+
+    <x-nav-link :href="route('user.penyewaan.index')" :active="request()->routeIs('user.penyewaan.*')">
+        {{ __('Penyewaan Kendaraan') }}
+    </x-nav-link>
+@endif
         </div>
 
         <div class="pt-4 pb-1 border-t border-zinc-900">
