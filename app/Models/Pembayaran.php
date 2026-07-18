@@ -19,6 +19,10 @@ class Pembayaran extends Model
         'idempotency_key',
     ];
 
+    protected $casts = [
+        'paid_at' => 'datetime',
+    ];
+
     public function penyewaan()
     {
         return $this->belongsTo(Penyewaan::class);

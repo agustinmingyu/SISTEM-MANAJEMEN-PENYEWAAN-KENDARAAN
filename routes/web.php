@@ -73,8 +73,8 @@ Route::middleware('role:admin')
 
         // Menu lainnya
         Route::resource('users', AdminUserController::class)->except(['show']);
-        Route::resource('penyewaan', AdminPenyewaanController::class)->only(['index','show','update','destroy']);
-        Route::get('/pembayaran', [PembayaranController::class, 'index'])->name('pembayaran.index');
+        Route::resource('penyewaan', AdminPenyewaanController::class);
+        Route::resource('pembayaran', PembayaranController::class);
         Route::get('/riwayat-pembayaran', fn() => view('admin.riwayat-pembayaran.index'))->name('riwayat-pembayaran.index');
         Route::get('/laporan', fn() => view('admin.laporan.index'))->name('laporan.index');
         Route::get('/pengaturan', fn() => view('admin.pengaturan.index'))->name('pengaturan.index');

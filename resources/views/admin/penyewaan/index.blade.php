@@ -2,13 +2,24 @@
 
 @section('content')
 <div class="container mx-auto p-6">
-    <h1 class="text-2xl font-semibold mb-4">Daftar Penyewaan</h1>
+    <div class="flex items-center justify-between mb-4">
+        <div>
+            <h1 class="text-2xl font-semibold">Daftar Penyewaan</h1>
+            <p class="text-sm text-zinc-400">Kelola penyewaan dan status transaksi dari admin.</p>
+        </div>
+        <a href="{{ route('admin.penyewaan.create') }}" class="bg-amber-500 text-black px-4 py-2 rounded-lg font-semibold hover:bg-amber-400">
+            + Tambah Penyewaan
+        </a>
+    </div>
 
     @if(session('success'))
         <div class="bg-green-100 text-green-800 p-3 rounded mb-4">{{ session('success') }}</div>
     @endif
+    @if(session('error'))
+        <div class="bg-red-100 text-red-800 p-3 rounded mb-4">{{ session('error') }}</div>
+    @endif
 
-    <form method="GET" class="mb-4 flex gap-2 items-center">
+    <form method="GET" class="mb-4 flex gap-2 items-center flex-wrap">
         <input type="text" name="q" value="{{ request('q') }}" placeholder="Cari user atau kendaraan" class="border rounded p-2" />
         <select name="status" class="border rounded p-2">
             <option value="">-- Semua status --</option>
@@ -46,6 +57,7 @@
                     <td class="px-4 py-2">{{ $p->status }}</td>
                     <td class="px-4 py-2">
                         <a href="{{ route('admin.penyewaan.show', $p) }}" class="text-blue-600 mr-2">Lihat</a>
+                        <a href="{{ route('admin.penyewaan.edit', $p) }}" class="text-amber-600 mr-2">Edit</a>
                         <form action="{{ route('admin.penyewaan.destroy', $p) }}" method="POST" style="display:inline">
                             @csrf
                             @method('DELETE')
@@ -66,55 +78,3 @@
     </div>
 </div>
 @endsection
-<x-app-layout>
-
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-white leading-tight">
-            {{ __('Data Penyewaan') }}
-        </h2>
-    </x-slot>
-
-    <div class="py-8">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-
-            <div class="bg-white shadow rounded-lg p-6">
-
-                <h3 class="text-xl font-bold mb-4">Daftar Penyewaan</h3>
-
-                <table class="w-full border border-gray-300">
-                    <thead class="bg-gray-200">
-                        <tr>
-                            <th class="border p-2">No</th>
-                            <th class="border p-2">Pengguna</th>
-                            <th class="border p-2">Kendaraan</th>
-                            <th class="border p-2">Tanggal</th>
-                            <th class="border p-2">Lama</th>
-                            <th class="border p-2">Total</th>
-                            <th class="border p-2">Status</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse($penyewaans as $penyewaan)
-                            <tr>
-                                <td class="border p-2 text-center">{{ $loop->iteration }}</td>
-                                <td class="border p-2">{{ $penyewaan->user->name ?? '-' }}</td>
-                                <td class="border p-2">{{ $penyewaan->kendaraan->nama ?? '-' }}</td>
-                                <td class="border p-2">{{ $penyewaan->tanggal_sewa }}</td>
-                                <td class="border p-2">{{ $penyewaan->lama_sewa }} Hari</td>
-                                <td class="border p-2">Rp {{ number_format($penyewaan->total_harga,0,',','.') }}</td>
-                                <td class="border p-2">{{ $penyewaan->status }}</td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="7" class="border p-4 text-center">Belum ada penyewaan.</td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
-
-            </div>
-
-        </div>
-    </div>
-
-</x-app-layout>
