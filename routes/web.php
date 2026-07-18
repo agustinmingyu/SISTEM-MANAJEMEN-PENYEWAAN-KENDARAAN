@@ -1,10 +1,12 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Admin\KendaraanController;
+use App\Http\Controllers\Admin\PembayaranController;
+use App\Http\Controllers\Admin\PenyewaanController as AdminPenyewaanController;
+use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\User\PenyewaanController;
-
+use App\Http\Controllers\User\KendaraanController as UserKendaraanController;
 
 /*
 |--------------------------------------------------------------------------
@@ -70,54 +72,65 @@ Route::middleware('role:admin')
         Route::resource('kendaraan', KendaraanController::class);
 
         // Menu lainnya
-        Route::get('/penyewaan', fn() => redirect()->route('admin.dashboard'))->name('penyewaan.index');
-        Route::get('/pembayaran', fn() => redirect()->route('admin.dashboard'))->name('pembayaran.index');
-        Route::get('/riwayat-pembayaran', fn() => redirect()->route('admin.dashboard'))->name('riwayat-pembayaran.index');
-        Route::get('/laporan', fn() => redirect()->route('admin.dashboard'))->name('laporan.index');
+        Route::resource('users', AdminUserController::class)->except(['show']);
+        Route::resource('penyewaan', AdminPenyewaanController::class)->only(['index','show','update','destroy']);
+        Route::get('/pembayaran', [PembayaranController::class, 'index'])->name('pembayaran.index');
+        Route::get('/riwayat-pembayaran', fn() => view('admin.riwayat-pembayaran.index'))->name('riwayat-pembayaran.index');
+        Route::get('/laporan', fn() => view('admin.laporan.index'))->name('laporan.index');
+        Route::get('/pengaturan', fn() => view('admin.pengaturan.index'))->name('pengaturan.index');
 
     });
 
-    /*
-    |--------------------------------------------------------------------------
-    | User Routes
-    |--------------------------------------------------------------------------
-    */
+   /*
+|--------------------------------------------------------------------------
+| User Routes
+|--------------------------------------------------------------------------
+*/
 
-    Route::middleware('role:user')
+Route::middleware('role:user')
     ->prefix('user')
     ->name('user.')
     ->group(function () {
 
-        // Daftar penyewaan user
+        // ==========================
+        // Daftar Kendaraan
+        // ==========================
+        Route::get('/kendaraan', [userKendaraanController::class, 'index'])
+            ->name('kendaraan.index');
+
+        Route::get('/kendaraan/{id}', [userKendaraanController::class, 'show'])
+            ->name('kendaraan.show');
+
+        // ==========================
+        // Penyewaan
+        // ==========================
         Route::get('/penyewaan', [PenyewaanController::class, 'index'])
             ->name('penyewaan.index');
 
-        // Form tambah penyewaan
         Route::get('/penyewaan/create', [PenyewaanController::class, 'create'])
             ->name('penyewaan.create');
 
-        // Simpan penyewaan
         Route::post('/penyewaan', [PenyewaanController::class, 'store'])
             ->name('penyewaan.store');
 
-        // Detail penyewaan
         Route::get('/penyewaan/{penyewaan}', [PenyewaanController::class, 'show'])
             ->name('penyewaan.show');
 
-        // Form edit penyewaan
         Route::get('/penyewaan/{penyewaan}/edit', [PenyewaanController::class, 'edit'])
             ->name('penyewaan.edit');
 
-        // Update penyewaan
         Route::put('/penyewaan/{penyewaan}', [PenyewaanController::class, 'update'])
             ->name('penyewaan.update');
 
-        // Hapus penyewaan
         Route::delete('/penyewaan/{penyewaan}', [PenyewaanController::class, 'destroy'])
             ->name('penyewaan.destroy');
 
     });
 
-});
+    }); // <-- Penutup Route::middleware('auth')->group(function () {
 
 require __DIR__.'/auth.php';
+
+// Webhook endpoint for payment gateway (stub)
+use App\Http\Controllers\Webhook\PembayaranWebhookController;
+Route::post('/webhook/pembayaran', [PembayaranWebhookController::class, 'handle'])->name('webhook.pembayaran');
