@@ -50,52 +50,71 @@ class PembayaranWebhookController extends Controller
             return response()->json(['message' => 'Pembayaran tidak ditemukan'], 404);
         }
 
-        DB::transaction(function () use ($pembayaran, $request) {
-            $old = $pembayaran->toArray();
-
-            $pembayaran->status = $request->status;
-            if (strtolower($request->status) === 'paid') {
-                $pembayaran->paid_at = now();
-            }
-            $pembayaran->save();
-
-            // Update penyewaan and kendaraan when paid
-            if (strtolower($request->status) === 'paid') {
-                $penyewaan = Penyewaan::find($pembayaran->penyewaan_id);
-                if ($penyewaan) {
-                    $penyewaan->status = 'Disetujui';
-                    $penyewaan->save();
-
-                    $kendaraan = Kendaraan::find($penyewaan->kendaraan_id);
-                    if ($kendaraan) {
-                        $kendaraan->update(['status' => 'disewa']);
-                    }
-                }
-            }
-
-            // Log activity
-            ActivityLog::create([
-                'user_id' => $pembayaran->user_id,
-                'action' => 'pembayaran_webhook:'.$request->status,
-                'subject_type' => Pembayaran::class,
-                'subject_id' => $pembayaran->id,
-                'before' => json_encode($old),
-                'after' => json_encode($pembayaran->toArray()),
-                'ip' => $request->ip(),
-            ]);
-        });
-
-        // Notify user and admins
-        $pembayaran->refresh();
-        $user = User::find($pembayaran->user_id);
-        if ($user) {
-            $user->notify(new PembayaranTercatat($pembayaran));
+        // idempotency: if status already identical, return OK
+        if (strtolower($pembayaran->status) === strtolower($request->status)) {
+            Log::info('Webhook ignored: status unchanged', ['pembayaran_id' => $pembayaran->id, 'status' => $request->status]);
+            return response()->json(['message' => 'No change'], 200);
         }
 
-        User::where('role', 'admin')->get()->each(function ($admin) use ($pembayaran) {
-            $admin->notify(new PembayaranTercatat($pembayaran));
-        });
+        try {
+            DB::transaction(function () use ($pembayaran, $request) {
+                $old = $pembayaran->toArray();
 
-        return response()->json(['message' => 'OK']);
+                $reqStatus = strtolower($request->status);
+                $normalized = match ($reqStatus) {
+                    'paid' => 'Paid',
+                    'failed' => 'Failed',
+                    'pending' => 'Pending',
+                    default => ucfirst($reqStatus),
+                };
+
+                $pembayaran->status = $normalized;
+                if ($reqStatus === 'paid') {
+                    $pembayaran->paid_at = now();
+                }
+                $pembayaran->save();
+
+                // Update penyewaan and kendaraan when paid
+                if (strtolower($request->status) === 'paid') {
+                    $penyewaan = Penyewaan::find($pembayaran->penyewaan_id);
+                    if ($penyewaan) {
+                        $penyewaan->status = 'Disetujui';
+                        $penyewaan->save();
+
+                        $kendaraan = Kendaraan::find($penyewaan->kendaraan_id);
+                        if ($kendaraan) {
+                            $kendaraan->update(['status' => 'disewa']);
+                        }
+                    }
+                }
+
+                // Log activity
+                ActivityLog::create([
+                    'user_id' => $pembayaran->user_id,
+                    'action' => 'pembayaran_webhook:'.$request->status,
+                    'subject_type' => Pembayaran::class,
+                    'subject_id' => $pembayaran->id,
+                    'before' => json_encode($old),
+                    'after' => json_encode($pembayaran->toArray()),
+                    'ip' => request()->ip(),
+                ]);
+            });
+
+            // Notify user and admins (notifications are queued if configured)
+            $pembayaran->refresh();
+            $user = User::find($pembayaran->user_id);
+            if ($user) {
+                try { $user->notify(new PembayaranTercatat($pembayaran)); } catch (\Throwable $e) { Log::error('Notify user failed', ['err' => $e->getMessage()]); }
+            }
+
+            User::where('role', 'admin')->get()->each(function ($admin) use ($pembayaran) {
+                try { $admin->notify(new PembayaranTercatat($pembayaran)); } catch (\Throwable $e) { Log::error('Notify admin failed', ['err' => $e->getMessage()]); }
+            });
+
+            return response()->json(['message' => 'OK']);
+        } catch (\Throwable $e) {
+            Log::error('Webhook handling failed', ['err' => $e->getMessage()]);
+            return response()->json(['message' => 'Internal error'], 500);
+        }
     }
 }

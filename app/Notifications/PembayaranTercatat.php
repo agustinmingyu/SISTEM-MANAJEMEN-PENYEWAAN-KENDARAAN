@@ -12,14 +12,15 @@ class PembayaranTercatat extends Notification implements ShouldQueue
 {
     use Queueable;
 
-    // set to a short delay to allow transaction commit when queued
-    public ?int $delay = 1;
+    // set a short delay to allow transaction commit when queued using Queueable
 
     protected Pembayaran $pembayaran;
 
     public function __construct(Pembayaran $pembayaran)
     {
         $this->pembayaran = $pembayaran;
+        // small delay so queued notification runs after DB transaction commits
+        $this->delay(now()->addSecond());
     }
 
     public function via($notifiable)
