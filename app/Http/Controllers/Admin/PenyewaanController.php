@@ -7,9 +7,12 @@ use App\Models\Kendaraan;
 use App\Models\Pembayaran;
 use App\Models\Penyewaan;
 use App\Models\User;
+use App\Models\User;
+use App\Notifications\PenyewaanStatusUpdated;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class PenyewaanController extends Controller
 {
@@ -214,6 +217,7 @@ class PenyewaanController extends Controller
 
         $kendaraanBaru = Kendaraan::findOrFail($request->kendaraan_id);
         $kendaraanLama = Kendaraan::find($penyewaan->kendaraan_id);
+        $statusLama = $penyewaan->status;
 
         DB::transaction(function () use ($request, $penyewaan, $kendaraanBaru, $kendaraanLama) {
             if ($penyewaan->kendaraan_id !== $request->kendaraan_id && $kendaraanLama) {
@@ -287,9 +291,22 @@ class PenyewaanController extends Controller
 			]);
 		});
 
-		return redirect()
-			->route('admin.penyewaan.index')
-			->with('success', 'Penyewaan berhasil dihapus.');
-	}
-}
+        // Notifikasi ke user pemilik penyewaan saat status berubah menjadi Disetujui/Ditolak
+        $penyewaan->refresh();
+        if ($statusLama !== $penyewaan->status && in_array($penyewaan->status, ['Disetujui', 'Ditolak'])) {
+            $penyewaan->loadMissing(['user', 'kendaraan']);
+
+            if ($penyewaan->user) {
+                try {
+                    $penyewaan->user->notify(new PenyewaanStatusUpdated($penyewaan, $statusLama));
+                } catch (\Throwable $e) {
+                    Log::error('Notify user penyewaan status failed', ['err' => $e->getMessage()]);
+                }
+            }
+        }
+
+        return redirect()
+            ->route('admin.penyewaan.index')
+            ->with('success', 'Penyewaan berhasil diperbarui.');
+    }
 
