@@ -49,7 +49,15 @@
                 </div>
             </div>
 
-            <div class="hidden sm:flex sm:items-center sm:ms-6">
+            <div class="hidden sm:flex sm:items-center sm:ms-6 gap-4">
+                <div id="jamWIT" class="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-zinc-900 border border-zinc-800 text-zinc-300 text-sm font-mono">
+                    <svg class="w-4 h-4 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    <span id="jamWITText">--:--:--</span>
+                    <span class="text-xs text-zinc-500">WIT</span>
+                </div>
+
                 <x-dropdown align="right" width="48">
                     <x-slot name="trigger">
                         <button class="inline-flex items-center px-3 py-2 border border-zinc-800 text-sm leading-4 font-medium rounded-xl text-zinc-300 bg-zinc-900 hover:text-white hover:bg-zinc-800/80 focus:outline-none transition ease-in-out duration-150">
@@ -154,3 +162,24 @@
         </div>
     </div>
 </nav>
+
+<script>
+    function updateJamWIT() {
+        // WIT = UTC+9
+        const now = new Date();
+        const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
+        const wit = new Date(utc + (9 * 3600000));
+
+        const jam = String(wit.getHours()).padStart(2, '0');
+        const menit = String(wit.getMinutes()).padStart(2, '0');
+        const detik = String(wit.getSeconds()).padStart(2, '0');
+
+        const el = document.getElementById('jamWITText');
+        if (el) {
+            el.textContent = `${jam}:${menit}:${detik}`;
+        }
+    }
+
+    updateJamWIT();
+    setInterval(updateJamWIT, 1000);
+</script>

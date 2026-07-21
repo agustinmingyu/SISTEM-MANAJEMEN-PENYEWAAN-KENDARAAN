@@ -9,6 +9,7 @@ use App\Models\Kendaraan;
 use App\Models\User;
 use App\Models\ActivityLog;
 use App\Notifications\PembayaranTercatat;
+use App\Services\PembayaranStatusSynchronizer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -19,7 +20,7 @@ class PembayaranWebhookController extends Controller
      * Handle incoming payment gateway webhook (stub).
      * Expects JSON: { pembayaran_id, status }
      */
-    public function handle(Request $request)
+    public function handle(Request $request, PembayaranStatusSynchronizer $statusSynchronizer)
     {
         // Validate webhook signature if configured
         $secret = config('services.payment.webhook_secret') ?? env('PAYMENT_WEBHOOK_SECRET');
@@ -33,7 +34,7 @@ class PembayaranWebhookController extends Controller
         $request->validate([
             'pembayaran_id' => 'sometimes|integer',
             'penyewaan_id' => 'sometimes|integer',
-            'status' => 'required|string',
+            'status' => 'required|string|in:pending,paid,failed,Pending,Paid,Failed',
         ]);
 
         $pembayaran = null;
@@ -57,7 +58,7 @@ class PembayaranWebhookController extends Controller
         }
 
         try {
-            DB::transaction(function () use ($pembayaran, $request) {
+            DB::transaction(function () use ($pembayaran, $request, $statusSynchronizer) {
                 $old = $pembayaran->toArray();
 
                 $reqStatus = strtolower($request->status);
@@ -73,20 +74,7 @@ class PembayaranWebhookController extends Controller
                     $pembayaran->paid_at = now();
                 }
                 $pembayaran->save();
-
-                // Update penyewaan and kendaraan when paid
-                if (strtolower($request->status) === 'paid') {
-                    $penyewaan = Penyewaan::find($pembayaran->penyewaan_id);
-                    if ($penyewaan) {
-                        $penyewaan->status = 'Disetujui';
-                        $penyewaan->save();
-
-                        $kendaraan = Kendaraan::find($penyewaan->kendaraan_id);
-                        if ($kendaraan) {
-                            $kendaraan->update(['status' => 'disewa']);
-                        }
-                    }
-                }
+                $statusSynchronizer->synchronize($pembayaran);
 
                 // Log activity
                 ActivityLog::create([

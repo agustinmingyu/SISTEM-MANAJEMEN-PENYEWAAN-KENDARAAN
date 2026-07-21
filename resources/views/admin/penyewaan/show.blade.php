@@ -32,7 +32,7 @@
             <select name="status" class="border rounded p-2 mr-2">
                 <option value="Pending" {{ $penyewaan->status == 'Pending' ? 'selected' : '' }}>Pending</option>
                 <option value="Disetujui" {{ $penyewaan->status == 'Disetujui' ? 'selected' : '' }}>Disetujui</option>
-                <option value="Dibatalkan" {{ $penyewaan->status == 'Dibatalkan' ? 'selected' : '' }}>Dibatalkan</option>
+                <option value="Ditolak" {{ $penyewaan->status == 'Ditolak' ? 'selected' : '' }}>Ditolak</option>
                 <option value="Selesai" {{ $penyewaan->status == 'Selesai' ? 'selected' : '' }}>Selesai</option>
             </select>
             <button class="bg-blue-600 text-white px-4 py-2 rounded">Update Status</button>
