@@ -73,7 +73,7 @@
                             <option value="">-- Pilih Status --</option>
                             <option value="Pending" {{ old('status', $penyewaan->status) == 'Pending' ? 'selected' : '' }}>Pending</option>
                             <option value="Disetujui" {{ old('status', $penyewaan->status) == 'Disetujui' ? 'selected' : '' }}>Disetujui</option>
-                            <option value="Dibatalkan" {{ old('status', $penyewaan->status) == 'Dibatalkan' ? 'selected' : '' }}>Dibatalkan</option>
+                            <option value="Ditolak" {{ old('status', $penyewaan->status) == 'Ditolak' ? 'selected' : '' }}>Ditolak</option>
                             <option value="Selesai" {{ old('status', $penyewaan->status) == 'Selesai' ? 'selected' : '' }}>Selesai</option>
                         </select>
                     </div>

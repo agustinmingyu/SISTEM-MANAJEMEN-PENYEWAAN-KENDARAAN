@@ -2,7 +2,7 @@
 
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-white leading-tight">
-            {{ __('Tambah Penyewaan') }}
+            {{ __('Edit Penyewaan') }}
         </h2>
     </x-slot>
 
@@ -11,18 +11,16 @@
 
             <div class="bg-white shadow rounded-lg p-6">
 
-                <form action="{{ route('user.penyewaan.store') }}" method="POST">
+                <form action="{{ route('user.penyewaan.update', $penyewaan->id) }}" method="POST">
                     @csrf
-                    <input type="hidden" name="idempotency_key" value="{{ $idempotencyKey ?? session('idempotency_key') }}" />
+                    @method('PUT')
 
                     <div class="mb-4">
                         <label class="block font-medium">Pilih Kendaraan</label>
 
                         <select name="kendaraan_id" class="w-full border rounded p-2" required>
-                            <option value="">-- Pilih Kendaraan --</option>
-
                             @foreach($kendaraans as $kendaraan)
-                                <option value="{{ $kendaraan->id }}">
+                                <option value="{{ $kendaraan->id }}" {{ $kendaraan->id == $penyewaan->kendaraan_id ? 'selected' : '' }}>
                                     {{ $kendaraan->nama }}
                                     - {{ $kendaraan->merk }}
                                     (Rp {{ number_format($kendaraan->harga_sewa,0,',','.') }}/hari)
@@ -42,7 +40,7 @@
                             type="date"
                             name="tanggal_sewa"
                             class="w-full border rounded p-2"
-                            value="{{ old('tanggal_sewa') }}"
+                            value="{{ old('tanggal_sewa', $penyewaan->tanggal_sewa) }}"
                             required>
 
                         @error('tanggal_sewa')
@@ -58,7 +56,7 @@
                             name="lama_sewa"
                             min="1"
                             class="w-full border rounded p-2"
-                            value="{{ old('lama_sewa') }}"
+                            value="{{ old('lama_sewa', $penyewaan->lama_sewa) }}"
                             required>
 
                         @error('lama_sewa')
@@ -69,35 +67,19 @@
                     <div class="flex gap-3">
 
                         <button
-                            id="submitBtn"
                             type="submit"
                             class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">
-
-                            Simpan
-
+                            Simpan Perubahan
                         </button>
 
                         <a href="{{ route('user.penyewaan.index') }}"
                            class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded">
-
                             Kembali
-
                         </a>
 
                     </div>
 
                 </form>
-
-                <script>
-                    document.addEventListener('DOMContentLoaded', function() {
-                        const form = document.querySelector('form');
-                        const btn = document.getElementById('submitBtn');
-                        form.addEventListener('submit', function() {
-                            btn.disabled = true;
-                            btn.innerText = 'Memproses...';
-                        });
-                    });
-                </script>
 
             </div>
 

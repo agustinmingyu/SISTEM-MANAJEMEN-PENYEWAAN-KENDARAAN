@@ -1,7 +1,7 @@
 <?php
-
 namespace App\Http\Controllers\User;
 
+use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use App\Models\Kendaraan;
 use App\Models\Pembayaran;
@@ -138,10 +138,64 @@ class PenyewaanController extends Controller
         // Notifikasi akan dikirim ketika pembayaran terverifikasi oleh webhook
 
         return redirect()
-            ->route('user.penyewaan.index')
-            ->with('success', 'Penyewaan berhasil dibuat dan pembayaran tercatat.');
+    ->route('user.penyewaan.bayar', $penyewaan)
+    ->with('success', 'Penyewaan berhasil dibuat. Silakan lakukan pembayaran.');
     }
 
+    /**
+ * Halaman pembayaran user.
+ */
+public function bayar(Penyewaan $penyewaan)
+{
+    $this->authorize('view', $penyewaan);
+
+    $pembayaran = Pembayaran::where('penyewaan_id', $penyewaan->id)
+        ->firstOrFail();
+
+    return view('user.pembayaran.bayar', compact(
+        'penyewaan',
+        'pembayaran'
+    ));
+}
+
+/**
+ * Proses pembayaran penyewaan.
+ */
+public function prosesPembayaran(Penyewaan $penyewaan)
+{
+    $this->authorize('view', $penyewaan);
+
+    $pembayaran = Pembayaran::where('penyewaan_id', $penyewaan->id)
+        ->firstOrFail();
+
+    if ($pembayaran->status === 'Paid') {
+        return redirect()
+            ->route('user.penyewaan.show', $penyewaan)
+            ->with('info', 'Pembayaran sudah dilakukan.');
+    }
+
+    DB::transaction(function () use ($pembayaran) {
+
+        $pembayaran->update([
+            'status' => 'Paid',
+            'paid_at' => now(),
+        ]);
+
+        \App\Models\ActivityLog::create([
+            'user_id' => Auth::id(),
+            'action' => 'pay_pembayaran',
+            'subject_type' => Pembayaran::class,
+            'subject_id' => $pembayaran->id,
+            'before' => null,
+            'after' => json_encode($pembayaran->fresh()->toArray()),
+            'ip' => request()->ip(),
+        ]);
+    });
+
+    return redirect()
+        ->route('user.penyewaan.show', $penyewaan)
+        ->with('success', 'Pembayaran berhasil dilakukan.');
+}
     /**
      * Detail penyewaan.
      */

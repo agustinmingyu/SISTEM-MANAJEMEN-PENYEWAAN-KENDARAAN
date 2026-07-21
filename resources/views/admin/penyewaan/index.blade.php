@@ -21,20 +21,20 @@
 
     <form method="GET" class="mb-4 flex gap-2 items-center flex-wrap">
         <input type="text" name="q" value="{{ request('q') }}" placeholder="Cari user atau kendaraan" class="border rounded p-2" />
-        <select name="status" class="border rounded p-2">
+        <select name="status" class="border border-zinc-700 bg-zinc-900 text-white rounded p-2">
             <option value="">-- Semua status --</option>
             <option value="Pending" {{ request('status')=='Pending' ? 'selected' : '' }}>Pending</option>
             <option value="Disetujui" {{ request('status')=='Disetujui' ? 'selected' : '' }}>Disetujui</option>
-            <option value="Dibatalkan" {{ request('status')=='Dibatalkan' ? 'selected' : '' }}>Dibatalkan</option>
+            <option value="Ditolak" {{ request('status')=='Ditolak' ? 'selected' : '' }}>Ditolak</option>
             <option value="Selesai" {{ request('status')=='Selesai' ? 'selected' : '' }}>Selesai</option>
         </select>
         <button class="bg-amber-500 text-black px-3 py-2 rounded">Filter</button>
         <a href="?{{ http_build_query(array_merge(request()->all(), ['export'=>'csv'])) }}" class="ml-2 text-sm text-blue-600">Export CSV</a>
     </form>
 
-    <table class="min-w-full bg-white shadow rounded">
+    <table class="min-w-full bg-zinc-900 rounded-xl overflow-hidden">
         <thead>
-            <tr class="bg-gray-100">
+           <tr class="bg-amber-500 text-black">
                 <th class="px-4 py-2">ID</th>
                 <th class="px-4 py-2">User</th>
                 <th class="px-4 py-2">Kendaraan</th>

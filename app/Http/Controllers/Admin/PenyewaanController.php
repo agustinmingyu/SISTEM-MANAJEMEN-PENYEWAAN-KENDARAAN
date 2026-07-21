@@ -92,7 +92,7 @@ class PenyewaanController extends Controller
             'kendaraan_id' => 'required|exists:kendaraans,id',
             'tanggal_sewa' => 'required|date',
             'lama_sewa'    => 'required|integer|min:1',
-            'status'       => 'required|string|in:Pending,Disetujui,Dibatalkan,Selesai',
+            'status'       => 'required|string|in:Pending,Disetujui,Ditolak,Selesai',
         ]);
 
         $kendaraan = Kendaraan::findOrFail($request->kendaraan_id);
@@ -189,7 +189,7 @@ class PenyewaanController extends Controller
             'kendaraan_id' => 'required|exists:kendaraans,id',
             'tanggal_sewa' => 'required|date',
             'lama_sewa'    => 'required|integer|min:1',
-            'status'       => 'required|string|in:Pending,Disetujui,Dibatalkan,Selesai',
+            'status'       => 'required|string|in:Pending,Disetujui,Ditolak,Selesai',
         ]);
 
         $start = Carbon::parse($request->tanggal_sewa);
@@ -222,7 +222,7 @@ class PenyewaanController extends Controller
 
             if ($request->status === 'Disetujui') {
                 $kendaraanBaru->update(['status' => 'disewa']);
-            } elseif (in_array($request->status, ['Dibatalkan', 'Selesai'])) {
+            } elseif (in_array($request->status, ['Ditolak', 'Selesai'])) {
                 $kendaraanBaru->update(['status' => 'tersedia']);
             }
 

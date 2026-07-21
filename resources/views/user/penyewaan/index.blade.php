@@ -96,10 +96,18 @@
 
                                 </a>
 
-                                <form
-                                    action="{{ route('user.penyewaan.destroy',$penyewaan->id) }}"
-                                    method="POST"
-                                    class="inline">
+                                @if($penyewaan->status == 'Pending')
+                                <form action="{{ route('user.penyewaan.destroy',$penyewaan) }}" method="POST">
+                                    @csrf
+                                    @method('DELETE')
+
+                                    <button
+                                        class="text-red-600"
+                                        onclick="return confirm('Yakin ingin menghapus?')">
+                                        Hapus
+                                    </button>
+                                </form>
+                                @endif
 
                                     @csrf
                                     @method('DELETE')

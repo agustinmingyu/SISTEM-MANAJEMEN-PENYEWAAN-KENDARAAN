@@ -7,6 +7,9 @@ use App\Http\Controllers\Admin\PenyewaanController as AdminPenyewaanController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\User\PenyewaanController;
 use App\Http\Controllers\User\KendaraanController as UserKendaraanController;
+use App\Http\Controllers\User\DashboardController as UserDashboardController;
+use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Admin\LaporanController;
 
 /*
 |--------------------------------------------------------------------------
@@ -32,9 +35,7 @@ Route::middleware('auth')->group(function () {
     |--------------------------------------------------------------------------
     */
 
-    Route::get('/dashboard', function () {
-        return view('dashboard');
-    })
+    Route::get('/dashboard', [UserDashboardController::class, 'index'])
     ->middleware([
         'verified',
         'role:user',
@@ -64,9 +65,7 @@ Route::middleware('role:admin')
     ->group(function () {
 
         // Dashboard Admin
-        Route::get('/', function () {
-            return view('admin.dashboard');
-        })->name('dashboard');
+        Route::get('/', [AdminController::class, 'index'])->name('dashboard');
 
         // CRUD Kendaraan
         Route::resource('kendaraan', KendaraanController::class);
@@ -75,8 +74,8 @@ Route::middleware('role:admin')
         Route::resource('users', AdminUserController::class)->except(['show']);
         Route::resource('penyewaan', AdminPenyewaanController::class);
         Route::resource('pembayaran', PembayaranController::class);
-        Route::get('/riwayat-pembayaran', fn() => view('admin.riwayat-pembayaran.index'))->name('riwayat-pembayaran.index');
-        Route::get('/laporan', fn() => view('admin.laporan.index'))->name('laporan.index');
+        Route::get('/riwayat-pembayaran', [PembayaranController::class, 'riwayat'])->name('riwayat-pembayaran.index');
+        Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan.index');
         Route::get('/pengaturan', fn() => view('admin.pengaturan.index'))->name('pengaturan.index');
 
     });
@@ -92,6 +91,14 @@ Route::middleware('role:user')
     ->name('user.')
     ->group(function () {
 
+        Route::post('/penyewaan', [PenyewaanController::class, 'store'])
+                 ->name('penyewaan.store');
+
+        Route::get('/penyewaan/{penyewaan}/bayar', [PenyewaanController::class, 'bayar'])
+                 ->name('penyewaan.bayar');
+
+        Route::post('/penyewaan/{penyewaan}/bayar', [PenyewaanController::class, 'prosesPembayaran'])
+                 ->name('penyewaan.prosesPembayaran');
         // ==========================
         // Daftar Kendaraan
         // ==========================
