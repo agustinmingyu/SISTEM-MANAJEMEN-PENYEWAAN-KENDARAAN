@@ -60,18 +60,21 @@
                     </div>
                 @endif
 
-                <div class="mt-8 flex gap-3">
-                    <a href="{{ route('user.penyewaan.index') }}"
-                       class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded">
-                        ← Kembali
-                    </a>
+               <div class="mt-8 flex gap-3">
+    <a href="{{ route('user.penyewaan.index') }}"
+       class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded">
+        ← Kembali
+    </a>
 
-                    @if($penyewaan->status === 'Pending')
-                        <a href="{{ route('user.penyewaan.edit', $penyewaan->id) }}"
-                           class="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded">
-                            Edit Penyewaan
-                        </a>
-                    @endif
+    @if($penyewaan->pembayaran)
+        <a href="{{ route('user.penyewaan.invoice', $penyewaan->id) }}" target="_blank"
+           class="bg-amber-500 hover:bg-amber-600 text-white px-4 py-2 rounded">
+            🖨️ Cetak Invoice
+        </a>
+    @endif
+
+    @if($penyewaan->status === 'Pending')
+        {{-- tombol edit yang sudah ada, biarkan tetap --}}
                 </div>
 
             </div>

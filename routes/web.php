@@ -11,6 +11,8 @@ use App\Http\Controllers\User\DashboardController as UserDashboardController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\LaporanController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\User\RiwayatTransaksiController;
+use App\Http\Controllers\InvoiceController;
 
 /*
 |--------------------------------------------------------------------------
@@ -85,6 +87,7 @@ Route::middleware('role:admin')
         // Menu lainnya
         Route::resource('users', AdminUserController::class)->except(['show']);
         Route::resource('penyewaan', AdminPenyewaanController::class);
+        Route::get('/penyewaan/{penyewaan}/invoice', [InvoiceController::class, 'cetak'])->name('penyewaan.invoice');
         Route::resource('pembayaran', PembayaranController::class);
         Route::get('/riwayat-pembayaran', [PembayaranController::class, 'riwayat'])->name('riwayat-pembayaran.index');
         Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan.index');
@@ -111,6 +114,7 @@ Route::middleware('role:user')
 
         Route::post('/penyewaan/{penyewaan}/bayar', [PenyewaanController::class, 'prosesPembayaran'])
                  ->name('penyewaan.prosesPembayaran');
+
         // ==========================
         // Daftar Kendaraan
         // ==========================
@@ -143,7 +147,15 @@ Route::middleware('role:user')
 
         Route::delete('/penyewaan/{penyewaan}', [PenyewaanController::class, 'destroy'])
             ->name('penyewaan.destroy');
+        
+        Route::get('/penyewaan/{penyewaan}/invoice', [InvoiceController::class, 'cetak'])
+            ->name('penyewaan.invoice');
 
+            // ==========================
+        // Riwayat Transaksi
+        // ==========================
+        Route::get('/riwayat-transaksi', [RiwayatTransaksiController::class, 'index'])
+            ->name('riwayat.index');
     });
 
     }); // <-- Penutup Route::middleware('auth')->group(function () {

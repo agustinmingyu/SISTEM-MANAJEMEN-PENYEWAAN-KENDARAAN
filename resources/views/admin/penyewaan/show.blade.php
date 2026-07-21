@@ -46,7 +46,13 @@
     </div>
 
     <div class="mt-4">
-        <a href="{{ route('admin.penyewaan.index') }}" class="text-gray-600">Kembali</a>
-    </div>
+    <a href="{{ route('admin.penyewaan.index') }}" class="text-gray-600">Kembali</a>
+
+    @if($penyewaan->pembayaran)
+        <a href="{{ route('admin.penyewaan.invoice', $penyewaan->id) }}" target="_blank"
+           class="ml-4 bg-amber-500 hover:bg-amber-600 text-white px-4 py-2 rounded inline-block">
+            🖨️ Cetak Invoice
+        </a>
+    @endif
 </div>
 @endsection

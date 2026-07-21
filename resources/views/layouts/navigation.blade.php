@@ -190,6 +190,10 @@
     <x-nav-link :href="route('user.penyewaan.index')" :active="request()->routeIs('user.penyewaan.*')">
         {{ __('Penyewaan Kendaraan') }}
     </x-nav-link>
+
+    <x-nav-link :href="route('user.riwayat.index')" :active="request()->routeIs('user.riwayat.*')">
+        {{ __('Riwayat Transaksi') }}
+    </x-nav-link>
 @endif
     <x-responsive-nav-link :href="route('notifications.index')" :active="request()->routeIs('notifications.*')">
         {{ __('Notifikasi') }}
