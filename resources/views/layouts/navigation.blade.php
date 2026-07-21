@@ -58,6 +58,61 @@
                     <span class="text-xs text-zinc-500">WIT</span>
                 </div>
 
+                @php
+                    $unreadNotifications = Auth::user()->unreadNotifications()->latest()->take(5)->get();
+                    $unreadCount = Auth::user()->unreadNotifications()->count();
+                @endphp
+
+                <x-dropdown align="right" width="w-80">
+                    <x-slot name="trigger">
+                        <button class="relative inline-flex items-center justify-center p-2 border border-zinc-800 rounded-xl text-zinc-300 bg-zinc-900 hover:text-white hover:bg-zinc-800/80 focus:outline-none transition ease-in-out duration-150">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" />
+                            </svg>
+                            @if($unreadCount > 0)
+                                <span class="absolute -top-1 -right-1 bg-amber-500 text-zinc-950 text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+                                    {{ $unreadCount > 9 ? '9+' : $unreadCount }}
+                                </span>
+                            @endif
+                        </button>
+                    </x-slot>
+
+                    <x-slot name="content">
+                        <div class="bg-zinc-900 border border-zinc-800 rounded-lg shadow-xl overflow-hidden">
+                            <div class="flex items-center justify-between px-4 py-2 border-b border-zinc-800">
+                                <span class="text-sm font-semibold text-white">Notifikasi</span>
+                                @if($unreadCount > 0)
+                                    <form method="POST" action="{{ route('notifications.readAll') }}">
+                                        @csrf
+                                        <button class="text-xs text-amber-500 hover:text-amber-400">Tandai semua dibaca</button>
+                                    </form>
+                                @endif
+                            </div>
+
+                            <div class="max-h-80 overflow-y-auto divide-y divide-zinc-800">
+                                @forelse($unreadNotifications as $notification)
+                                    <form method="POST" action="{{ route('notifications.read', $notification->id) }}">
+                                        @csrf
+                                        <button type="submit" class="w-full text-left px-4 py-3 text-sm text-zinc-300 hover:bg-zinc-800">
+                                            {{ $notification->data['message'] ?? 'Notifikasi baru' }}
+                                            <div class="text-xs text-zinc-500 mt-1">{{ $notification->created_at->diffForHumans() }}</div>
+                                        </button>
+                                    </form>
+                                @empty
+                                    <div class="px-4 py-6 text-sm text-zinc-500 text-center">
+                                        Tidak ada notifikasi baru.
+                                    </div>
+                                @endforelse
+                            </div>
+
+                            <div class="px-4 py-2 border-t border-zinc-800">
+                                <a href="{{ route('notifications.index') }}" class="text-xs text-zinc-400 hover:text-white">
+                                    Lihat semua notifikasi
+                                </a>
+                            </div>
+                        </div>
+                    </x-slot>
+                </x-dropdown>
                 <x-dropdown align="right" width="48">
                     <x-slot name="trigger">
                         <button class="inline-flex items-center px-3 py-2 border border-zinc-800 text-sm leading-4 font-medium rounded-xl text-zinc-300 bg-zinc-900 hover:text-white hover:bg-zinc-800/80 focus:outline-none transition ease-in-out duration-150">
@@ -136,6 +191,13 @@
         {{ __('Penyewaan Kendaraan') }}
     </x-nav-link>
 @endif
+    <x-responsive-nav-link :href="route('notifications.index')" :active="request()->routeIs('notifications.*')">
+        {{ __('Notifikasi') }}
+        @php $mobileUnread = Auth::user()->unreadNotifications()->count(); @endphp
+        @if($mobileUnread > 0)
+            <span class="ml-1 text-amber-500 font-semibold">({{ $mobileUnread }})</span>
+        @endif
+    </x-responsive-nav-link>
         </div>
 
         <div class="pt-4 pb-1 border-t border-zinc-900">

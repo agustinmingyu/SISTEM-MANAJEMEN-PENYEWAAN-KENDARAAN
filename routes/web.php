@@ -10,6 +10,7 @@ use App\Http\Controllers\User\KendaraanController as UserKendaraanController;
 use App\Http\Controllers\User\DashboardController as UserDashboardController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\LaporanController;
+use App\Http\Controllers\NotificationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -54,6 +55,17 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
   /*
+    |--------------------------------------------------------------------------
+    | Notifikasi
+    |--------------------------------------------------------------------------
+    */
+
+    Route::get('/notifikasi', [NotificationController::class, 'index'])->name('notifications.index');
+    Route::post('/notifikasi/{id}/baca', [NotificationController::class, 'markAsRead'])->name('notifications.read');
+    Route::post('/notifikasi/tandai-semua', [NotificationController::class, 'markAllAsRead'])->name('notifications.readAll');
+  
+  
+    /*
 |--------------------------------------------------------------------------
 | Admin Routes
 |--------------------------------------------------------------------------
